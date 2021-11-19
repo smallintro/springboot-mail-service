@@ -1,8 +1,8 @@
 package io.github.smallintro.emailsender.service;
 
-import io.github.smallintro.emailsender.model.EmailInfo;
-import io.github.smallintro.emailsender.util.EMailSender;
-import io.github.smallintro.emailsender.util.EmailInfoValidator;
+import io.github.smallintro.emailsender.model.MailInfo;
+import io.github.smallintro.emailsender.util.MailSenderUtil;
+import io.github.smallintro.emailsender.util.ValidatorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,16 +13,16 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class EMailService {
+public class MailSenderService {
     @Autowired
-    private EMailSender sender;
+    private MailSenderUtil sender;
 
     @Value("${attachment.path:/attachments}")
     private String attachments;
 
-    public String sendMail(EmailInfo mail) {
-        EmailInfoValidator.validateMailIds(mail);
-        EmailInfoValidator.validateMailIAttachment(mail);
+    public String sendMail(MailInfo mail) {
+        ValidatorUtil.validateMailIds(mail);
+        ValidatorUtil.validateMailIAttachment(mail);
         try {
             if (mail.isAttachment()) {
                 List<String> attachments = new ArrayList<>();
@@ -36,4 +36,5 @@ public class EMailService {
             return "Mail is not sent: " + ex.getMessage();
         }
     }
+
 }

@@ -1,6 +1,6 @@
 package io.github.smallintro.emailsender.util;
 
-import io.github.smallintro.emailsender.model.EmailInfo;
+import io.github.smallintro.emailsender.model.MailInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.List;
 
 @Component
-public class EMailSender {
+public class MailSenderUtil {
 
     @Value("${spring.mail.username}")
     private String sendFrom;
@@ -24,7 +24,7 @@ public class EMailSender {
     @Autowired
     private JavaMailSender emailSender;
 
-    public void sendMailWithAttachment(EmailInfo mail, List<String> attachments) throws MessagingException {
+    public void sendMailWithAttachment(MailInfo mail, List<String> attachments) throws MessagingException {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         FileSystemResource file = new FileSystemResource(new File(attachments.get(0)));
         // pass 'true' to the constructor to create a multipart message
@@ -45,7 +45,7 @@ public class EMailSender {
         emailSender.send(mimeMessage);
     }
 
-    public void sendMailWithoutAttachment(EmailInfo mail) {
+    public void sendMailWithoutAttachment(MailInfo mail) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(sendFrom);
         if (!CollectionUtils.isEmpty(mail.getMailTo())) {

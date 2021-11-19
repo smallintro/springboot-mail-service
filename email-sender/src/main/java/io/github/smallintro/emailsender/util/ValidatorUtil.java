@@ -1,6 +1,6 @@
 package io.github.smallintro.emailsender.util;
 
-import io.github.smallintro.emailsender.model.EmailInfo;
+import io.github.smallintro.emailsender.model.MailInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.util.CollectionUtils;
@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class EmailInfoValidator {
+public class ValidatorUtil {
 
-    public static void validateMailIds(EmailInfo mail) {
+    public static void validateMailIds(MailInfo mail) {
 
         if (CollectionUtils.isEmpty(mail.getMailTo())
                 && CollectionUtils.isEmpty(mail.getMailCc())
@@ -53,10 +53,16 @@ public class EmailInfoValidator {
         }
     }
 
-    public static void validateMailIAttachment(EmailInfo mail) {
+    public static void validateMailIAttachment(MailInfo mail) {
         if (mail.isAttachment() && !StringUtils.hasLength(mail.getMailSubject())) {
             log.error("Email with attachment must have a Subject");
             throw new IllegalArgumentException("Email with attachment must have a Subject");
         }
+    }
+
+    public static void validateFile(String name, long size, String contentType) {
+        // file name length
+        // validate file extentions
+        // validate file size
     }
 }
