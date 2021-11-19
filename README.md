@@ -1,10 +1,11 @@
-### spring boot email sender service
+# spring boot email sender service
 
 
 ## Upload file for attachment
 - Open http://localhost:8081/file and upload file
 
 ## Send mail
+- Email client info is configured in application.properties file
 - Trigger POST http://127.0.0.1:8081/mail/send
 ```
   {
@@ -21,7 +22,6 @@
   - validate the request and attachments.
   - compose the email with detail sent in request.
   - attach the file in mail.
-  - Email client info is configured in application.properties file
 
 ## Email client app password
 1. [Generate Gmail app password](https://support.google.com/accounts/answer/185833)
