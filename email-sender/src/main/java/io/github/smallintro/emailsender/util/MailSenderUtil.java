@@ -1,5 +1,6 @@
 package io.github.smallintro.emailsender.util;
 
+import io.github.smallintro.emailsender.config.AppConstants;
 import io.github.smallintro.emailsender.model.MailInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +14,6 @@ import org.springframework.util.CollectionUtils;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
-import java.util.List;
 
 @Component
 public class MailSenderUtil {
@@ -23,10 +23,10 @@ public class MailSenderUtil {
 
     @Autowired
     private JavaMailSender emailSender;
-
-    public void sendMailWithAttachment(MailInfo mail, List<String> attachments) throws MessagingException {
+    // TODO: Send mail to multiple recipient and multiple attachment need to implemented.
+    public void sendMailWithAttachment(MailInfo mail) throws MessagingException {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
-        FileSystemResource file = new FileSystemResource(new File(attachments.get(0)));
+        FileSystemResource file = new FileSystemResource(new File(AppConstants.UPLOAD_PATH+mail.getAttachments().get(0)));
         // pass 'true' to the constructor to create a multipart message
         MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true);
         message.setFrom(sendFrom);

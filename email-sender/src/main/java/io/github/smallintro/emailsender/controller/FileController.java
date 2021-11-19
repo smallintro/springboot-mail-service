@@ -37,8 +37,7 @@ public class FileController {
                     "You successfully uploaded " + file.getOriginalFilename() + "!");
         } catch (Exception ex) {
             log.error("Failed to upload file: {}. Error {}", file.getOriginalFilename(), ex.getMessage());
-            redirectAttributes.addFlashAttribute("message",
-                    "Failed to upload file " + file.getOriginalFilename() + "!");
+            redirectAttributes.addFlashAttribute("message", ex.getMessage());
         }
         return "redirect:/file";
     }
@@ -52,8 +51,7 @@ public class FileController {
                     "attachment; filename=\"" + file.getFilename() + "\"").body(file);
         } catch (Exception ex) {
             log.error("Failed to download file: {}. Error {}", filename, ex.getMessage());
-            return new ResponseEntity(filename + " not downloaded.\nError: " + ex.getMessage(),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -61,10 +59,6 @@ public class FileController {
     public String listFiles(Model model) {
         log.info("Received listFiles request");
         try {
-            /*model.addAttribute("files", fileStorageService.listFiles().map(
-                            path -> MvcUriComponentsBuilder.fromMethodName(FileController.class,
-                                    "listFiles", path.getFileName().toString()).build().toUri().toString())
-                    .collect(Collectors.toList()));*/
             List<FileInfo> files = fileStorageService.listFiles().map(path -> {
                 String filename = path.getFileName().toString();
                 String url = MvcUriComponentsBuilder
@@ -74,7 +68,7 @@ public class FileController {
             model.addAttribute("files", files);
         } catch (Exception ex) {
             log.error("Failed to list files. Error {}", ex.getMessage());
-            model.addAttribute("message", "Failed to get files. " + ex.getMessage());
+            model.addAttribute("message", ex.getMessage());
         }
         return "file-manager";
     }

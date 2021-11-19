@@ -1,5 +1,7 @@
 package io.github.smallintro.emailsender.service;
 
+import io.github.smallintro.emailsender.config.AppConstants;
+import io.github.smallintro.emailsender.util.ValidatorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,27 +21,26 @@ import java.util.stream.Stream;
 @Slf4j
 public class FileStorageService {
 
-    public final Path rootPath = Paths.get("/file");
-    public final Path uploadPath = Paths.get("/file/uploads");
-    public final Path attachmentPath = Paths.get("/file/attachments");
+    private final Path uploadPath = Paths.get(AppConstants.UPLOAD_PATH);
 
     private final int maxDepth = 1;
 
-    public void init(Path dirPath) {
+    public void init(String dirPath) {
         try {
-            Files.createDirectory(dirPath);
+            Files.createDirectory(Paths.get(dirPath));
         } catch (FileAlreadyExistsException e) {
             log.warn("Directory {} already exists ", e.getMessage());
         } catch (IOException ex) {
-            throw new RuntimeException("Could not initialize folder for upload!" + ex.getMessage());
+            throw new RuntimeException("Could not initialize folder for upload!\nError: " + ex.getMessage());
         }
     }
 
     public String saveFile(MultipartFile file) {
         try {
+            ValidatorUtil.validateFile(file.getName(), file.getSize(), file.getContentType());
             Files.copy(file.getInputStream(), uploadPath.resolve(file.getOriginalFilename()));
         } catch (Exception ex) {
-            throw new RuntimeException("Could not save the file. Error: " + ex.getMessage());
+            throw new RuntimeException("Could not save the file!\nError: " + ex.getMessage());
         }
         return String.format("{} Uploaded", file.getOriginalFilename());
     }
@@ -55,7 +56,7 @@ public class FileStorageService {
                 throw new RuntimeException("Not able to read file: " + file.getFileName());
             }
         } catch (MalformedURLException ex) {
-            throw new RuntimeException("Could not read the file! Error: " + ex.getMessage());
+            throw new RuntimeException("Could not read the file!\nError: " + ex.getMessage());
         }
     }
 
@@ -64,16 +65,15 @@ public class FileStorageService {
             // scan the upload directory and get list of files
             return Files.walk(uploadPath, maxDepth).filter(path -> !path.equals(uploadPath)).map(uploadPath::relativize);
         } catch (IOException ex) {
-            throw new RuntimeException("Could not load the files! Error: " + ex.getMessage());
+            throw new RuntimeException("Could not load the files!\nError: " + ex.getMessage());
         }
     }
 
-    public void deleteAllFiles(Path dirPath) {
+    public void deleteAllFiles(String dirPath) {
         try {
-            FileSystemUtils.deleteRecursively(dirPath);
+            FileSystemUtils.deleteRecursively(Paths.get(dirPath));
         } catch (IOException ex) {
-            throw new RuntimeException("Could not clear files! Error: " + ex.getMessage());
+            throw new RuntimeException("Could not clear files!\nError: " + ex.getMessage());
         }
-
     }
 }

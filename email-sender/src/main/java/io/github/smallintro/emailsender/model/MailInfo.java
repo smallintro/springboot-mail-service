@@ -24,6 +24,6 @@ public class MailInfo {
     @JsonProperty("bcc")
     private List<String> mailBcc;
 
-    @JsonProperty("has_attachment")
-    private boolean isAttachment;
+    @JsonProperty("attachments")
+    private List<String> attachments;
 }

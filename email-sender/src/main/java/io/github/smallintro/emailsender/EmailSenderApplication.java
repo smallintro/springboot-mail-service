@@ -1,5 +1,6 @@
 package io.github.smallintro.emailsender;
 
+import io.github.smallintro.emailsender.config.AppConstants;
 import io.github.smallintro.emailsender.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -10,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * MultipartConfigElement bean will be created by spring boot
  */
 @SpringBootApplication
-public class EmailSenderApplication implements CommandLineRunner{
+public class EmailSenderApplication implements CommandLineRunner {
 
     @Autowired
     FileStorageService fileStorageService;
@@ -22,10 +23,9 @@ public class EmailSenderApplication implements CommandLineRunner{
 
     @Override
     public void run(String... arg) {
-        fileStorageService.init(fileStorageService.rootPath);
-        fileStorageService.init(fileStorageService.uploadPath);
-        fileStorageService.init(fileStorageService.attachmentPath);
-        fileStorageService.deleteAllFiles(fileStorageService.attachmentPath);
+        fileStorageService.init(AppConstants.ROOT_FILE_PATH);
+        fileStorageService.init(AppConstants.UPLOAD_PATH);
+        // fileStorageService.deleteAllFiles(AppConstants.UPLOAD_PATH);
     }
 
 }
