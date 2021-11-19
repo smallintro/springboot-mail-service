@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Validated
-public class EmailInfo {
+public class MailInfo {
     @JsonProperty("subject")
     private String mailSubject;
 
@@ -24,6 +24,6 @@ public class EmailInfo {
     @JsonProperty("bcc")
     private List<String> mailBcc;
 
-    @JsonProperty("has_attachment")
-    private boolean isAttachment;
+    @JsonProperty("attachments")
+    private List<String> attachments;
 }
