@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.FileAlreadyExistsException;
@@ -45,7 +46,7 @@ public class FileStorageService {
         return String.format("{} Uploaded", file.getOriginalFilename());
     }
 
-    public Resource getFile(String filename) {
+    public Resource getFile(String filename) throws FileNotFoundException {
         try {
             Path file = uploadPath.resolve(filename);
             Resource resource = new UrlResource(file.toUri());
@@ -56,7 +57,7 @@ public class FileStorageService {
                 throw new RuntimeException("Not able to read file: " + file.getFileName());
             }
         } catch (MalformedURLException ex) {
-            throw new RuntimeException("Could not read the file!\nError: " + ex.getMessage());
+            throw new FileNotFoundException("Could not read the file!\nError: " + ex.getMessage());
         }
     }
 
