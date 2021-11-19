@@ -2,6 +2,7 @@ package io.github.smallintro.emailsender.util;
 
 import io.github.smallintro.emailsender.config.AppConstants;
 import io.github.smallintro.emailsender.model.MailInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -16,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.File;
 
 @Component
+@Slf4j
 public class MailSenderUtil {
 
     @Value("${spring.mail.username}")
@@ -23,39 +25,48 @@ public class MailSenderUtil {
 
     @Autowired
     private JavaMailSender emailSender;
-    // TODO: Send mail to multiple recipient and multiple attachment need to implemented.
+
     public void sendMailWithAttachment(MailInfo mail) throws MessagingException {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
-        FileSystemResource file = new FileSystemResource(new File(AppConstants.UPLOAD_PATH+mail.getAttachments().get(0)));
         // pass 'true' to the constructor to create a multipart message
         MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true);
         message.setFrom(sendFrom);
         if (!CollectionUtils.isEmpty(mail.getMailTo())) {
-            message.setTo(mail.getMailTo().get(0));
+            message.setTo(mail.getMailTo().toArray(new String[mail.getMailTo().size()]));
         }
         if (!CollectionUtils.isEmpty(mail.getMailCc())) {
-            message.setCc(mail.getMailCc().get(0));
+            message.setCc(mail.getMailCc().toArray(new String[mail.getMailTo().size()]));
         }
         if (!CollectionUtils.isEmpty(mail.getMailBcc())) {
-            message.setBcc(mail.getMailBcc().get(0));
+            message.setBcc(mail.getMailBcc().toArray(new String[mail.getMailTo().size()]));
         }
         message.setSubject(mail.getMailSubject());
         message.setText(mail.getMailBody());
-        message.addAttachment(file.getFilename(), file);
+
+        mail.getAttachments().forEach(attachment -> {
+            FileSystemResource file = new FileSystemResource(new File(AppConstants.UPLOAD_PATH + attachment));
+            try {
+                message.addAttachment(file.getFilename(), file);
+            } catch (MessagingException e) {
+                log.error("Failed to attach {} in mail. Error: {}", file.getFilename(), e.getMessage());
+            }
+        });
+
         emailSender.send(mimeMessage);
     }
+
 
     public void sendMailWithoutAttachment(MailInfo mail) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(sendFrom);
         if (!CollectionUtils.isEmpty(mail.getMailTo())) {
-            message.setTo(mail.getMailTo().get(0));
+            message.setTo(mail.getMailTo().toArray(new String[mail.getMailTo().size()]));
         }
         if (!CollectionUtils.isEmpty(mail.getMailCc())) {
-            message.setCc(mail.getMailCc().get(0));
+            message.setCc(mail.getMailCc().toArray(new String[mail.getMailTo().size()]));
         }
         if (!CollectionUtils.isEmpty(mail.getMailBcc())) {
-            message.setBcc(mail.getMailBcc().get(0));
+            message.setBcc(mail.getMailBcc().toArray(new String[mail.getMailTo().size()]));
         }
         message.setSubject(mail.getMailSubject());
         message.setText(mail.getMailBody());
