@@ -1,5 +1,14 @@
 # spring boot email sender service
 
+docker build -t infointent/email-sender:v1.0 .
+docker run -d -p 8081:8081 --name email-sender -t infointent/email-sender:v1.0
+docker ps
+docker exec -ti email-sender sh
+docker stop <container-id>
+docker rm <container-id>
+docker rmi infointent/email-sender:v1.0
+docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+docker image prune
 
 ## Upload file for attachment
 - Open http://localhost:8081/file and upload file

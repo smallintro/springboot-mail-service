@@ -23,8 +23,7 @@ public class EmailSenderApplication implements CommandLineRunner {
 
     @Override
     public void run(String... arg) {
-        fileStorageService.init(AppConstants.ROOT_FILE_PATH);
-        fileStorageService.init(AppConstants.UPLOAD_PATH);
+        fileStorageService.createUploadPath(AppConstants.UPLOAD_PATH);
         // fileStorageService.deleteAllFiles(AppConstants.UPLOAD_PATH);
     }
 

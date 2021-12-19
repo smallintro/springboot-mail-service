@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -26,13 +27,15 @@ public class FileStorageService {
 
     private final int maxDepth = 1;
 
-    public void init(String dirPath) {
+    public void createUploadPath(String dirPath) {
         try {
-            Files.createDirectory(Paths.get(dirPath));
+            Path filePath = StringUtils.hasLength(dirPath) ? Paths.get(dirPath) : uploadPath;
+            Files.createDirectories(filePath);
         } catch (FileAlreadyExistsException e) {
             log.warn("Directory {} already exists ", e.getMessage());
         } catch (IOException ex) {
-            throw new RuntimeException("Could not initialize folder for upload!\nError: " + ex.getMessage());
+            log.error("Could not initialize folder for upload!\nError: " + ex.getMessage());
+            // throw new RuntimeException("Could not initialize folder for upload!\nError: " + ex.getMessage());
         }
     }
 
